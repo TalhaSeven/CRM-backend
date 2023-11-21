@@ -1,4 +1,7 @@
-import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm";
+import { Phone } from "./Phone";
+import { Email } from "./Email";
+import { Address } from "./Address";
 
 enum role {
     ADMIN = "admin",
@@ -34,4 +37,13 @@ export class User {
 
   @Column({type: "enum", enum: confirmed, default: confirmed.PENDING})
   confirmed: confirmed;
+
+  @OneToMany(() => Phone, (phone) => phone.user, { cascade: true })
+  phones: Phone[];
+
+  @OneToMany(() => Email, (email) => email.user, { cascade: true })
+  emails: Email[];
+
+  @OneToMany(() => Address, (address) => address.user, { cascade: true })
+  addresses: Address[];
 }
