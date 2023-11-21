@@ -5,7 +5,6 @@ import { Phone } from "./entity/Phone";
 import { Email } from "./entity/Email";
 import { Address } from "./entity/Address";
 
-
 export const AppDataSource = new DataSource({
   type: "mysql",
   host: "localhost",

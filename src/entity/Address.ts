@@ -28,7 +28,6 @@ export class Address {
   location: string;
 
   @ManyToOne(() => User, (user) => user.id)
-  @JoinColumn()
+  @JoinColumn({ name: "user_id" })
   user: User;
-
 }

@@ -25,7 +25,7 @@ import {
     emailAddress: string;
   
     @ManyToOne(() => User, (user) => user.id)
-    @JoinColumn()
+    @JoinColumn({ name: "user_id" })
     user: User;
   
   }
