@@ -1,0 +1,7 @@
+.idea/
+.vscode/
+node_modules/
+build/
+tmp/
+temp/
+src/migrations/data-source.ts
