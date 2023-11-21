@@ -30,4 +30,5 @@ export class Address {
   @ManyToOne(() => User, (user) => user.id)
   @JoinColumn()
   user: User;
+  
 }
