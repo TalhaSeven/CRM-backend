@@ -13,7 +13,7 @@ enum phoneType {
   BRANCH = "branch",
 }
 
-@Entity()
+@Entity("phones")
 export class Phone {
   @PrimaryGeneratedColumn()
   id: number;

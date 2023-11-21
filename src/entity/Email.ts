@@ -13,7 +13,7 @@ import {
     BRANCH = "branch",
   }
   
-  @Entity()
+  @Entity("emails")
   export class Email {
     @PrimaryGeneratedColumn()
     id: number;

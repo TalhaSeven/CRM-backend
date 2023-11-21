@@ -12,7 +12,7 @@ enum confirmed {
     DENIED = "denied",
 }
 
-@Entity()
+@Entity("users")
 export class User {
   @PrimaryGeneratedColumn()
   id: number;

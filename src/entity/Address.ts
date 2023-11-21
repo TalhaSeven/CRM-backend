@@ -13,7 +13,7 @@ enum addressType {
   BRANCH = "branch",
 }
 
-@Entity()
+@Entity("addresses")
 export class Address {
   @PrimaryGeneratedColumn()
   id: number;
@@ -30,5 +30,5 @@ export class Address {
   @ManyToOne(() => User, (user) => user.id)
   @JoinColumn()
   user: User;
-  
+
 }
