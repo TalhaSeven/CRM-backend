@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany, CreateDateColumn, UpdateDateColumn } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, CreateDateColumn, UpdateDateColumn, DeleteDateColumn } from "typeorm";
 import { Phone } from "./Phone";
 import { Email } from "./Email";
 import { Address } from "./Address";
@@ -50,6 +50,9 @@ export class User {
   @CreateDateColumn()
   createdAt: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({nullable: true})
   updatedAt: Date;
+
+  @DeleteDateColumn({nullable: true})
+  deletedAt?: Date;
 }
