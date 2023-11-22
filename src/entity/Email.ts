@@ -4,10 +4,13 @@ import {
   Column,
   ManyToOne,
   JoinColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+  DeleteDateColumn,
 } from "typeorm";
 import { User } from "./User";
 
-enum emailType {
+enum type {
   HOME = "home",
   CENTER = "center",
   BRANCH = "branch",
@@ -18,8 +21,8 @@ export class Email {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: "enum", enum: emailType, default: emailType.HOME })
-  emailType: emailType;
+  @Column({ type: "enum", enum: type, default: type.HOME })
+  emailType: type;
 
   @Column({ type: "varchar", length: 100 })
   emailAddress: string;
@@ -27,4 +30,13 @@ export class Email {
   @ManyToOne(() => User, (user) => user.id)
   @JoinColumn({ name: "user_id" })
   user: User;
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn({ nullable: true })
+  updatedAt: Date;
+
+  @DeleteDateColumn({ nullable: true })
+  deletedAt?: Date;
 }

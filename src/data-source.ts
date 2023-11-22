@@ -4,6 +4,8 @@ import { User } from "./entity/User";
 import { Phone } from "./entity/Phone";
 import { Email } from "./entity/Email";
 import { Address } from "./entity/Address";
+import { Calender } from "./entity/Calender";
+import { UserInfo } from "./entity/UserInfo";
 
 export const AppDataSource = new DataSource({
   type: "mysql",
@@ -12,9 +14,9 @@ export const AppDataSource = new DataSource({
   username: "root",
   password: "1234",
   database: "crm",
-  synchronize: true,
+  synchronize: true, // canlıda false olmalı
   logging: false,
-  entities: [User, Phone, Email, Address],
+  entities: [User, Phone, Email, Address, Calender, UserInfo],
   migrations: [],
   subscribers: [],
 });

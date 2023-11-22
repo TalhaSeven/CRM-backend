@@ -4,10 +4,13 @@ import {
   Column,
   JoinColumn,
   ManyToOne,
+  CreateDateColumn,
+  UpdateDateColumn,
+  DeleteDateColumn,
 } from "typeorm";
 import { User } from "./User";
 
-enum addressType {
+enum type {
   HOME = "home",
   CENTER = "center",
   BRANCH = "branch",
@@ -18,8 +21,8 @@ export class Address {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: "enum", enum: addressType, default: addressType.HOME })
-  addressType: addressType;
+  @Column({ type: "enum", enum: type, default: type.HOME })
+  addressType: type;
 
   @Column()
   addressLine: string;
@@ -30,4 +33,13 @@ export class Address {
   @ManyToOne(() => User, (user) => user.id)
   @JoinColumn({ name: "user_id" })
   user: User;
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn({ nullable: true })
+  updatedAt: Date;
+
+  @DeleteDateColumn({ nullable: true })
+  deletedAt?: Date;
 }

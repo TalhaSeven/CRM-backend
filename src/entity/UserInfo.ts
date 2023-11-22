@@ -4,6 +4,9 @@ import {
     Column,
     ManyToOne,
     JoinColumn,
+    CreateDateColumn,
+    UpdateDateColumn,
+    DeleteDateColumn,
   } from "typeorm";
   import { User } from "./User";
   
@@ -15,5 +18,14 @@ import {
     @ManyToOne(() => User, (user) => user.id)
     @JoinColumn({ name: "user_id" })
     user: User;
+
+    @CreateDateColumn()
+    createdAt: Date;
+  
+    @UpdateDateColumn({ nullable: true })
+    updatedAt: Date;
+  
+    @DeleteDateColumn({ nullable: true })
+    deletedAt?: Date;
   }
   

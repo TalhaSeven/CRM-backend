@@ -11,19 +11,22 @@ import {
 import { User } from "./User";
 
 enum type {
-  MEETING = "meeting",
-  PHONE = "phone",
-  EMAIL = "email",
-  LOCATION = "location",
+  IMPORTANT = "important",
+  STANDARD = "standard",
+}
+enum status {
+  APPOINTED = "appointed",
+  IN_PROGRESS = "in_progress",
+  DONE = "done",
 }
 
-@Entity("calenders")
-export class Calender {
+@Entity("tasks")
+export class Task {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: "enum", enum: type, default: type.MEETING })
-  calenderType: type;
+  @Column({ type: "enum", enum: type, default: type.STANDARD })
+  taskType: type;
 
   @Column({ type: "varchar", length: 250 })
   title: string;
@@ -36,8 +39,11 @@ export class Calender {
   user: User;
 
   @ManyToOne(() => User, (user) => user.id)
-  @JoinColumn({ name: "participantId" })
-  participant: User;
+  @JoinColumn({ name: "responsibleId" })
+  responsible: User;
+
+  @Column({ type: "enum", enum: status, default: status.APPOINTED })
+  status: status;
 
   @CreateDateColumn()
   createdAt: Date;
