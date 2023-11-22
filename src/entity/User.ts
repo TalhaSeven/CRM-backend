@@ -1,5 +1,15 @@
-import * as bcrypt from 'bcrypt';
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany, CreateDateColumn, UpdateDateColumn, DeleteDateColumn, BeforeInsert, AfterInsert } from "typeorm";
+import * as bcrypt from "bcrypt";
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  OneToMany,
+  CreateDateColumn,
+  UpdateDateColumn,
+  DeleteDateColumn,
+  BeforeInsert,
+  AfterInsert,
+} from "typeorm";
 import { Phone } from "./Phone";
 import { Email } from "./Email";
 import { Address } from "./Address";
@@ -53,10 +63,10 @@ export class User {
   @CreateDateColumn()
   createdAt: Date;
 
-  @UpdateDateColumn({nullable: true})
+  @UpdateDateColumn({ nullable: true })
   updatedAt: Date;
 
-  @DeleteDateColumn({nullable: true})
+  @DeleteDateColumn({ nullable: true })
   deletedAt?: Date;
 
   @BeforeInsert()
@@ -64,7 +74,13 @@ export class User {
     const logRepository = AppDataSource.getRepository(Log);
     const log = Object.assign(new Log(), {
       type: "user",
-      process:" new account created " + this.email + " " + this.firstName + " " + this.lastName
+      process:
+        " new account created " +
+        this.email +
+        " " +
+        this.firstName +
+        " " +
+        this.lastName,
     });
     logRepository.save(log);
     const hash = await bcrypt.hash(this.password, 10);
@@ -72,14 +88,19 @@ export class User {
   }
 
   @AfterInsert()
-  async test(){
-    console.log("after insert"+this.id);
+  async test() {
+    console.log("after insert" + this.id);
     const logRepository = AppDataSource.getRepository(Log);
     const log = Object.assign(new Log(), {
       type: "user",
-      process:" new account created " + this.email + " " + this.firstName + " " + this.lastName
+      process:
+        " new account created " +
+        this.email +
+        " " +
+        this.firstName +
+        " " +
+        this.lastName,
     });
     logRepository.save(log);
   }
-
 }
