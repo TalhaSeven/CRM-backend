@@ -7,8 +7,11 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   DeleteDateColumn,
+  AfterInsert,
 } from "typeorm";
 import { User } from "./User";
+import { AppDataSource } from "../data-source";
+import { Log } from "./Log";
 
 enum type {
   IMPORTANT = "important",
@@ -53,4 +56,16 @@ export class Task {
 
   @DeleteDateColumn({ nullable: true })
   deletedAt?: Date;
+
+  @AfterInsert()
+  async userLog() {
+    const logRepository = AppDataSource.getRepository(Log);
+    const log = Object.assign(new Log(), {
+      type: "task_info",
+      process:
+        "task info => ",
+      user: this.id,
+    });
+    logRepository.save(log);
+  }
 }

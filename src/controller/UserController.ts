@@ -35,6 +35,19 @@ export class UserController {
     return this.userRepository.save(user);
   }
 
+  async update(request: Request, response: Response, next: NextFunction) {
+    const id = parseInt(request.params.id);
+    const { firstName, lastName } = request.body;
+
+    return this.userRepository.update(
+      { id },
+      {
+        firstName,
+        lastName,
+      }
+    );
+  }
+
   async remove(request: Request, response: Response, next: NextFunction) {
     const id = parseInt(request.params.id);
 

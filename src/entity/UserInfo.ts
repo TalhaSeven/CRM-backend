@@ -6,8 +6,11 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   DeleteDateColumn,
+  AfterInsert,
 } from "typeorm";
 import { User } from "./User";
+import { AppDataSource } from "../data-source";
+import { Log } from "./Log";
 
 @Entity("user_info")
 export class UserInfo {
@@ -26,4 +29,16 @@ export class UserInfo {
 
   @DeleteDateColumn({ nullable: true })
   deletedAt?: Date;
+
+  @AfterInsert()
+  async userLog() {
+    const logRepository = AppDataSource.getRepository(Log);
+    const log = Object.assign(new Log(), {
+      type: "user_info",
+      process:
+        "user info => ",
+      user: this.id,
+    });
+    logRepository.save(log);
+  }
 }

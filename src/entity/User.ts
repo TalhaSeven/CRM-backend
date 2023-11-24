@@ -9,6 +9,8 @@ import {
   DeleteDateColumn,
   BeforeInsert,
   AfterInsert,
+  BeforeUpdate,
+  AfterUpdate,
 } from "typeorm";
 import { Phone } from "./Phone";
 import { Email } from "./Email";
@@ -25,6 +27,7 @@ enum role {
 enum confirmed {
   PENDING = "pending",
   EMAIL = "email",
+  APPROVAL = "approval",
   DENIED = "denied",
 }
 
@@ -71,35 +74,56 @@ export class User {
 
   @BeforeInsert()
   async hashPassword() {
-    const logRepository = AppDataSource.getRepository(Log);
-    const log = Object.assign(new Log(), {
-      type: "user",
-      process:
-        " new account created " +
-        this.email +
-        " " +
-        this.firstName +
-        " " +
-        this.lastName,
-    });
-    logRepository.save(log);
-    const hash = await bcrypt.hash(this.password, 10);
-    this.password = hash;
+    this.password = await bcrypt.hash(this.password, 10);
   }
 
   @AfterInsert()
-  async test() {
-    console.log("after insert" + this.id);
+  async userLog() {
     const logRepository = AppDataSource.getRepository(Log);
     const log = Object.assign(new Log(), {
       type: "user",
       process:
-        " new account created " +
+        " new account created => " +
         this.email +
         " " +
         this.firstName +
         " " +
         this.lastName,
+      user: this.id,
+    });
+    logRepository.save(log);
+  }
+
+  @BeforeUpdate()
+  async userUpdateLog() {
+    const logRepository = AppDataSource.getRepository(Log);
+    const log = Object.assign(new Log(), {
+      type: "user",
+      process:
+        "new account updated after => " +
+        this.email +
+        " " +
+        this.firstName +
+        " " +
+        this.lastName,
+      user: this.id,
+    });
+    logRepository.save(log);
+  }
+
+  @AfterUpdate()
+  async userAfterUpdateLog() {
+    const logRepository = AppDataSource.getRepository(Log);
+    const log = Object.assign(new Log(), {
+      type: "user",
+      process:
+        "new account updated before=> " +
+        this.email +
+        " " +
+        this.firstName +
+        " " +
+        this.lastName,
+      user: this.id,
     });
     logRepository.save(log);
   }
