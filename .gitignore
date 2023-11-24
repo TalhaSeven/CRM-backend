@@ -4,4 +4,4 @@ node_modules/
 build/
 tmp/
 temp/
-src/data-source.ts
+.env

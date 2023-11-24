@@ -1,13 +1,21 @@
 import * as express from "express";
 import * as bodyParser from "body-parser";
-import { Request, Response } from "express";
+import { Request, Response, NextFunction, ErrorRequestHandler } from "express"
 import { AppDataSource } from "./data-source";
 import { Routes } from "./routes";
+
+require("dotenv").config();
 
 AppDataSource.initialize()
   .then(async () => {
     const app = express();
     app.use(bodyParser.json());
+
+    app.all("*", (req: Request, res: Response, next: Function) => {
+      console.log(process.env.PORT);
+      console.log("Request received");
+      next();
+    })
 
     Routes.forEach((route) => {
       (app as any)[route.method](
@@ -31,8 +39,14 @@ AppDataSource.initialize()
       );
     });
 
-    app.listen(3050);
+    app.use((error: ErrorRequestHandler, request:Request, response:Response, next:NextFunction) => {
+      console.log(error);
+      response.status(404).json("test");
+    })
+    
 
-    console.log("Express server has started on port 3050.");
+    app.listen(process.env.PORT);
+
+    console.log("Express server has started on port => "+process.env.PORT);
   })
   .catch((error) => console.log(error));

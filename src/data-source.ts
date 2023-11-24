@@ -8,13 +8,15 @@ import { Calender } from "./entity/Calender";
 import { UserInfo } from "./entity/UserInfo";
 import { Log } from "./entity/Log";
 
+require("dotenv").config();
+
 export const AppDataSource = new DataSource({
   type: "mysql",
-  host: "localhost",
+  host: process.env.DB_HOST,
   port: 3306,
-  username: "root",
-  password: "1234",
-  database: "crm",
+  username: process.env.DB_USERNAME,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_DATABASE,
   synchronize: true, // live in false in production.
   logging: false,
   entities: [User, Phone, Email, Address, Calender, UserInfo, Log],
