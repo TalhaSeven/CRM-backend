@@ -15,7 +15,7 @@ export const AppDataSource = new DataSource({
   username: "root",
   password: "1234",
   database: "crm",
-  synchronize: true, // live in false
+  synchronize: true, // live in false in production.
   logging: false,
   entities: [User, Phone, Email, Address, Calender, UserInfo, Log],
   migrations: [],
