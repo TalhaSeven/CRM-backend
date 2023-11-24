@@ -44,7 +44,6 @@ AppDataSource.initialize()
       response.status(404).json("test");
     })
     
-
     app.listen(process.env.PORT);
 
     console.log("Express server has started on port => "+process.env.PORT);
