@@ -28,16 +28,16 @@ export class Task {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: "enum", enum: type, default: type.STANDARD })
+  @Column({ type: "enum", enum: type, default: type.STANDARD, nullable: false })
   taskType: type;
 
-  @Column({ type: "varchar", length: 250 })
+  @Column({ type: "varchar", length: 250, nullable: false })
   title: string;
 
   @Column({ type: "text" })
   description: string;
 
-  @ManyToOne(() => User, (user) => user.id)
+  @ManyToOne(() => User, (user) => user.id, { nullable: false })
   @JoinColumn({ name: "user_id" })
   user: User;
 
@@ -45,7 +45,7 @@ export class Task {
   @JoinColumn({ name: "responsibleId" })
   responsible: User;
 
-  @Column({ type: "enum", enum: status, default: status.APPOINTED })
+  @Column({ type: "enum", enum: status, default: status.APPOINTED, nullable: false })
   status: status;
 
   @CreateDateColumn()

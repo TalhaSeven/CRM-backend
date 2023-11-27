@@ -23,13 +23,13 @@ export class Log {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: "enum", enum: type, default: type.TASK })
+  @Column({ type: "enum", enum: type, default: type.TASK, nullable: false })
   type: type;
 
-  @Column({ type: "varchar", length: 200 })
+  @Column({ type: "varchar", length: 200, nullable: false })
   process: string;
 
-  @ManyToOne(() => User, (user) => user.id)
+  @ManyToOne(() => User, (user) => user.id, { nullable: false })
   @JoinColumn({ name: "user_id" })
   user: User;
 

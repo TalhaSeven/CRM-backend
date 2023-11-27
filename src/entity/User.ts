@@ -36,10 +36,10 @@ export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: "varchar", length: 100 })
+  @Column({ type: "varchar", length: 100, nullable: false })
   firstName: string;
 
-  @Column({ type: "varchar", length: 100 })
+  @Column({ type: "varchar", length: 100, nullable: false })
   lastName: string;
 
   @Column({ unique: true, type: "varchar", length: 100 })
@@ -83,7 +83,7 @@ export class User {
     const log = Object.assign(new Log(), {
       type: "user",
       process:
-        " new account created => " +
+        "new account created => " +
         this.email +
         " " +
         this.firstName +

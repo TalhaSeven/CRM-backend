@@ -24,16 +24,16 @@ export class Address {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: "enum", enum: type, default: type.HOME })
+  @Column({ type: "enum", enum: type, default: type.HOME, nullable: false })
   addressType: type;
 
-  @Column()
+  @Column({ nullable: true })
   addressLine: string;
 
-  @Column()
+  @Column({ nullable: true })
   location: string;
 
-  @ManyToOne(() => User, (user) => user.id)
+  @ManyToOne(() => User, (user) => user.id, { onDelete: "CASCADE", nullable: false })
   @JoinColumn({ name: "user_id" })
   user: User;
 
@@ -51,8 +51,7 @@ export class Address {
     const logRepository = AppDataSource.getRepository(Log);
     const log = Object.assign(new Log(), {
       type: "address_info",
-      process:
-        "address info => ",
+      process: "address info => ",
       user: this.id,
     });
     logRepository.save(log);

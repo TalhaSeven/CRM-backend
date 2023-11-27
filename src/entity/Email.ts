@@ -24,13 +24,13 @@ export class Email {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: "enum", enum: type, default: type.HOME })
+  @Column({ type: "enum", enum: type, default: type.HOME, nullable: false })
   emailType: type;
 
-  @Column({ type: "varchar", length: 100 })
+  @Column({ type: "varchar", length: 100, nullable: false })
   emailAddress: string;
 
-  @ManyToOne(() => User, (user) => user.id)
+  @ManyToOne(() => User, (user) => user.id, {onDelete: "CASCADE", nullable: false })
   @JoinColumn({ name: "user_id" })
   user: User;
 

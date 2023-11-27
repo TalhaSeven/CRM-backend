@@ -25,20 +25,20 @@ export class Calender {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: "enum", enum: type, default: type.MEETING })
+  @Column({ type: "enum", enum: type, default: type.MEETING, nullable: false })
   calenderType: type;
 
-  @Column({ type: "varchar", length: 250 })
+  @Column({ type: "varchar", length: 250,nullable: false })
   title: string;
 
-  @Column({ type: "text" })
+  @Column({ type: "text", nullable: true })
   description: string;
 
-  @ManyToOne(() => User, (user) => user.id)
+  @ManyToOne(() => User, (user) => user.id, { nullable: false })
   @JoinColumn({ name: "user_id" })
   user: User;
 
-  @ManyToOne(() => User, (user) => user.id)
+  @ManyToOne(() => User, (user) => user.id, { nullable: true })
   @JoinColumn({ name: "participantId" })
   participant: User;
 
@@ -56,8 +56,7 @@ export class Calender {
     const logRepository = AppDataSource.getRepository(Log);
     const log = Object.assign(new Log(), {
       type: "calender_info",
-      process:
-        "calender info => ",
+      process: "calender info => ",
       user: this.id,
     });
     logRepository.save(log);
