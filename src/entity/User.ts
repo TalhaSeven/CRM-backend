@@ -63,13 +63,13 @@ export class User {
   @OneToMany(() => Address, (address) => address.user, { cascade: true })
   addresses: Address[];
 
-  @CreateDateColumn()
+  @CreateDateColumn({select:false})
   createdAt: Date;
 
-  @UpdateDateColumn({ nullable: true })
+  @UpdateDateColumn({ nullable: true,select:false })
   updatedAt: Date;
 
-  @DeleteDateColumn({ nullable: true })
+  @DeleteDateColumn({ nullable: true,select:false })
   deletedAt?: Date;
 
   @BeforeInsert()

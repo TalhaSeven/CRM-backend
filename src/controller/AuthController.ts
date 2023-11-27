@@ -19,7 +19,9 @@ export class AuthController {
     }
 
     const isPasswordMatch = await bcrypt.compare(password, user.password);
-    if (isPasswordMatch) return user;
-    else return "wrong password";
+    if (isPasswordMatch) {
+      user.password = "";
+      return user;
+    } else return "wrong password";
   }
 }
