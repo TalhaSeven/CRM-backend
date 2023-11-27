@@ -3,6 +3,7 @@ import * as bodyParser from "body-parser";
 import { Request, Response, NextFunction, ErrorRequestHandler } from "express"
 import { AppDataSource } from "./data-source";
 import { Routes } from "./routes";
+import * as cors from "cors";
 
 require("dotenv").config();
 
@@ -10,6 +11,7 @@ AppDataSource.initialize()
   .then(async () => {
     const app = express();
     app.use(bodyParser.json());
+    app.use(cors({credentials: true}));
 
     app.all("*", (req: Request, res: Response, next: Function) => {
       next();
