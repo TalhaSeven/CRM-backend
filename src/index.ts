@@ -12,14 +12,12 @@ AppDataSource.initialize()
     app.use(bodyParser.json());
 
     app.all("*", (req: Request, res: Response, next: Function) => {
-      console.log(process.env.PORT);
-      console.log("Request received");
       next();
     })
 
     Routes.forEach((route) => {
       (app as any)[route.method](
-        route.route,
+        `/api/v1${route.route}`,
         (req: Request, res: Response, next: Function) => {
           const result = new (route.controller as any)()[route.action](
             req,
