@@ -2,7 +2,8 @@ import { AppDataSource } from "../data-source";
 import { NextFunction, Request, Response } from "express";
 import { User } from "../entity/User";
 import * as bcrypt from "bcrypt";
-import e = require("express");
+import jwt = require("jsonwebtoken");
+import { log } from "console";
 
 export class AuthController {
   private userRepository = AppDataSource.getRepository(User);
@@ -18,10 +19,20 @@ export class AuthController {
       return "unregistered user";
     }
 
-    const isPasswordMatch = await bcrypt.compare(password, user.password);
-    if (isPasswordMatch) {
-      user.password = "";
-      return user;
+    const isValid = await bcrypt.compare(password, user.password);
+    if (isValid) {
+      const loginUser = {
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        role: user.role,
+        confirmed: user.confirmed,
+      };
+      const token = jwt.sign(
+        { exp: Math.floor(Date.now() / 1000) + 60 * 60, data: loginUser },
+        "secret"
+      );
+      return { status: true, token, user: loginUser };
     } else return "wrong password";
   }
 }
