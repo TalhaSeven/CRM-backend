@@ -1,6 +1,6 @@
 import * as express from "express";
 import * as bodyParser from "body-parser";
-import { Request, Response, NextFunction, ErrorRequestHandler } from "express"
+import { Request, Response, NextFunction, ErrorRequestHandler } from "express";
 import { AppDataSource } from "./data-source";
 import { Routes } from "./routes";
 import * as cors from "cors";
@@ -11,11 +11,11 @@ AppDataSource.initialize()
   .then(async () => {
     const app = express();
     app.use(bodyParser.json());
-    app.use(cors({credentials: true}));
+    app.use(cors({ credentials: true }));
 
     app.all("*", (req: Request, res: Response, next: Function) => {
       next();
-    })
+    });
 
     Routes.forEach((route) => {
       (app as any)[route.method](
@@ -39,13 +39,20 @@ AppDataSource.initialize()
       );
     });
 
-    app.use((error: ErrorRequestHandler, request:Request, response:Response, next:NextFunction) => {
-      console.log(error);
-      response.status(404).json("test");
-    })
-    
+    app.use(
+      (
+        error: ErrorRequestHandler,
+        request: Request,
+        response: Response,
+        next: NextFunction
+      ) => {
+        console.log(error);
+        response.status(404).json("test");
+      }
+    );
+
     app.listen(process.env.PORT);
 
-    console.log("Express server has started on port => "+process.env.PORT);
+    console.log("Express server has started on port => " + process.env.PORT);
   })
   .catch((error) => console.log(error));

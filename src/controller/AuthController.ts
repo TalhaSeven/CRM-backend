@@ -33,6 +33,6 @@ export class AuthController {
         "secret"
       );
       return { status: true, token, user: loginUser };
-    } else return "wrong password";
+    } else return response.status(401).json({ status: false });
   }
 }
