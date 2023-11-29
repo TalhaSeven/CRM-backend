@@ -17,6 +17,7 @@ import { Email } from "./Email";
 import { Address } from "./Address";
 import { AppDataSource } from "../data-source";
 import { Log } from "./Log";
+import { AfterLoad } from "../../node_modules 2/typeorm";
 
 enum role {
   ADMIN = "admin",
@@ -126,5 +127,11 @@ export class User {
       user: this.id,
     });
     logRepository.save(log);
+  }
+
+  fullName:string;
+  @AfterLoad()
+  afterLoad() {
+    this.fullName = `${this.firstName} ${this.lastName}`;
   }
 }

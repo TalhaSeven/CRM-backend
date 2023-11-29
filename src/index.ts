@@ -5,6 +5,8 @@ import { AppDataSource } from "./data-source";
 import { Routes } from "./routes";
 import * as cors from "cors";
 import * as jwt from "jsonwebtoken";
+import { User } from "./entity/User";
+import { error } from "console";
 
 require("dotenv").config();
 
@@ -14,15 +16,22 @@ AppDataSource.initialize()
     app.use(bodyParser.json());
     app.use(cors({ credentials: true }));
 
-    app.all("*", (req: Request, res: Response, next: Function) => {
+    app.all("*", async (req: Request, res: Response, next: Function) => {
       if (req.url.endsWith("/login") || req.url.endsWith("/register")) {
         next();
       } else {
         try {
-          const token = req.headers.authorization;
-          const verify = jwt.verify(token as string, "secret");
-          const decode: any = verify ? jwt.decode(token as string) : null;
-          next();
+          const token = req.headers.authorization.replace("Bearer ", "");
+          const verify = jwt.verify(token, "secret");
+          const decode: any = verify ? jwt.decode(token) : null;
+          const email = decode.data.email;
+          const userRepository = AppDataSource.getRepository(User);
+          const user = await userRepository.findOne({ where: { email } });
+          if (user.confirmed === "approval" || user.confirmed === "email") {
+            next();
+          } else {
+            res.status(401).json({ status: false, message: user.confirmed });
+          }
         } catch (error: any) {
           res.status(401).json({ status: false, message: error.message });
         }

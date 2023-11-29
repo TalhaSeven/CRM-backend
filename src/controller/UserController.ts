@@ -6,7 +6,15 @@ export class UserController {
   private userRepository = AppDataSource.getRepository(User);
 
   async all(request: Request, response: Response, next: NextFunction) {
-    return this.userRepository.find();
+    return this.userRepository.find({
+      select: {
+        firstName: true,
+        lastName: true,
+        email: true,
+        role: true,
+        confirmed: true,
+      },
+    });
   }
 
   async one(request: Request, response: Response, next: NextFunction) {
