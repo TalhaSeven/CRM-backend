@@ -4,6 +4,7 @@ import { Request, Response, NextFunction, ErrorRequestHandler } from "express";
 import { AppDataSource } from "./data-source";
 import { Routes } from "./routes";
 import * as cors from "cors";
+import * as jwt from "jsonwebtoken";
 
 require("dotenv").config();
 
@@ -14,7 +15,18 @@ AppDataSource.initialize()
     app.use(cors({ credentials: true }));
 
     app.all("*", (req: Request, res: Response, next: Function) => {
-      next();
+      if (req.url.endsWith("/login") || req.url.endsWith("/register")) {
+        next();
+      } else {
+        try {
+          const token = req.headers.authorization;
+          const verify = jwt.verify(token as string, "secret");
+          const decode: any = verify ? jwt.decode(token as string) : null;
+          next();
+        } catch (error: any) {
+          res.status(401).json({ status: false, message: error.message });
+        }
+      }
     });
 
     Routes.forEach((route) => {
