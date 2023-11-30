@@ -28,7 +28,11 @@ AppDataSource.initialize()
           const userRepository = AppDataSource.getRepository(User);
           const user = await userRepository.findOne({ where: { email } });
           if (user.confirmed === "approval" || user.confirmed === "email") {
-            next();
+            if (req.url.endsWith("/is-login")) {
+              res.status(200).json({ status: true });
+            } else {
+              next();
+            }
           } else {
             res.status(401).json({ status: false, message: user.confirmed });
           }
@@ -73,7 +77,6 @@ AppDataSource.initialize()
     );
 
     app.listen(process.env.PORT);
-
     console.log("Express server has started on port => " + process.env.PORT);
   })
   .catch((error) => console.log(error));
