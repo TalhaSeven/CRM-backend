@@ -45,15 +45,14 @@ export class UserController {
       firstName,
       lastName,
       email,
-      password:(Math.random() * 1000).toFixed(0),
+      password: (Math.random() * 1000).toFixed(0),
     });
-    
+
     try {
       return await this.userRepository.save(user);
     } catch (error) {
-      return response.status(500).json({status:false, code: error.code });
+      next(error);
     }
-    // return await this.userRepository.save(user);
   }
 
   async update(request: Request, response: Response, next: NextFunction) {

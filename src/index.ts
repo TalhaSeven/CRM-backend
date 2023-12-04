@@ -1,12 +1,11 @@
 import * as express from "express";
 import * as bodyParser from "body-parser";
-import { Request, Response, NextFunction, ErrorRequestHandler } from "express";
+import { Request, Response, NextFunction } from "express";
 import { AppDataSource } from "./data-source";
 import { Routes } from "./routes";
 import * as cors from "cors";
 import * as jwt from "jsonwebtoken";
 import { User } from "./entity/User";
-import { error } from "console";
 
 require("dotenv").config();
 
@@ -66,13 +65,17 @@ AppDataSource.initialize()
 
     app.use(
       (
-        error: ErrorRequestHandler,
+        error: any,
         request: Request,
         response: Response,
         next: NextFunction
       ) => {
-        console.log(error);
-        response.status(404).json("test");
+        return response.status(500).json({
+          status: false,
+          code: error.code,
+          errno: error.errno,
+          message: error.message,
+        });
       }
     );
 

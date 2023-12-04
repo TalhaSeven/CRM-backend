@@ -33,6 +33,9 @@ export class AuthController {
         "secret"
       );
       return { status: true, token, user: loginUser };
-    } else return response.status(401).json({ status: false });
+    } else {
+      const error: any = new Error("invalid password");
+      next(error);
+    }
   }
 }
