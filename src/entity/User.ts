@@ -18,6 +18,7 @@ import { Email } from "./Email";
 import { Address } from "./Address";
 import { AppDataSource } from "../data-source";
 import { Log } from "./Log";
+import { IsDefined } from "class-validator";
 
 enum role {
   ADMIN = "admin",
@@ -38,6 +39,7 @@ export class User {
   id: number;
 
   @Column({ type: "varchar", length: 100, nullable: false })
+  @IsDefined({ message: "First name is required"})
   firstName: string;
 
   @Column({ type: "varchar", length: 100, nullable: false })
