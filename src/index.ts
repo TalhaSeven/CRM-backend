@@ -70,7 +70,7 @@ AppDataSource.initialize()
         response: Response,
         next: NextFunction
       ) => {
-        return response.status(500).json({
+        return response.status(error.status).json({
           status: false,
           code: error.code,
           errno: error.errno,

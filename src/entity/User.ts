@@ -18,7 +18,7 @@ import { Email } from "./Email";
 import { Address } from "./Address";
 import { AppDataSource } from "../data-source";
 import { Log } from "./Log";
-import { IsDefined } from "class-validator";
+import { IsDefined, IsEmail } from "class-validator";
 
 enum role {
   ADMIN = "admin",
@@ -46,6 +46,7 @@ export class User {
   lastName: string;
 
   @Column({ unique: true, type: "varchar", length: 100 })
+  @IsEmail({}, { message: "Email is not valid" })
   email: string;
 
   @Column({ type: "varchar", length: 100 })
