@@ -1,0 +1,1 @@
+export enum TaskEnum { IMPORTANT = 'important', STANDARD = 'standard' };
