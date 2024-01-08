@@ -1,64 +1,70 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  ManyToOne,
-  JoinColumn,
-  CreateDateColumn,
-  UpdateDateColumn,
-  DeleteDateColumn,
-  AfterInsert,
-} from "typeorm";
-import { User } from "./User";
-import { AppDataSource } from "../data-source";
-import { Log } from "./Log";
-
-enum type {
-  MEETING = "meeting",
-  PHONE = "phone",
-  EMAIL = "email",
-  LOCATION = "location",
-}
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, CreateDateColumn, UpdateDateColumn, DeleteDateColumn, AfterInsert, ManyToMany, AfterLoad, In } from "typeorm"
+import { User } from "./User"
+import { AppDataSource } from "../data-source"
+import { Log } from "./Log"
+import { CalenderEnum } from "../enum/CalenderEnum"
+import { CalenderUserModel } from "../model/CalenderUserModel"
 
 @Entity("calenders")
 export class Calender {
-  @PrimaryGeneratedColumn()
-  id: number;
 
-  @Column({ type: "enum", enum: type, default: type.MEETING, nullable: false })
-  calenderType: type;
+    @PrimaryGeneratedColumn()
+    id: number
 
-  @Column({ type: "varchar", length: 250,nullable: false })
-  title: string;
+    @Column({ type: "enum", enum: CalenderEnum, default: CalenderEnum.MEETING, nullable: false })
+    calenderType: CalenderEnum
 
-  @Column({ type: "text", nullable: true })
-  description: string;
+    @Column({ type: 'varchar', length: 250, nullable: false })
+    title: string
 
-  @ManyToOne(() => User, (user) => user.id, { nullable: false })
-  @JoinColumn({ name: "user_id" })
-  user: User;
+    @Column({ type: 'text', nullable: true })
+    description: string
 
-  @ManyToOne(() => User, (user) => user.id, { nullable: true })
-  @JoinColumn({ name: "participantId" })
-  participant: User;
+    @Column({ type: 'json' })
+    traits: object;
 
-  @CreateDateColumn()
-  createdAt: Date;
+    @ManyToOne(() => User, (user) => user.id, { nullable: false })
+    @JoinColumn({ name: "userId" })
+    user: User
 
-  @UpdateDateColumn({ nullable: true })
-  updatedAt: Date;
+    @Column({ type: 'json', nullable: true })
+    participants: Number[]
 
-  @DeleteDateColumn({ nullable: true })
-  deletedAt?: Date;
+    @CreateDateColumn()
+    createdAt: Date;
 
-  @AfterInsert()
-  async userLog() {
-    const logRepository = AppDataSource.getRepository(Log);
-    const log = Object.assign(new Log(), {
-      type: "calender_info",
-      process: "calender info => ",
-      user: this.id,
-    });
-    logRepository.save(log);
-  }
+    @UpdateDateColumn({ nullable: true })
+    updateAt: Date;
+
+    @DeleteDateColumn({ nullable: true })
+    deletedAt: Date;
+
+    @AfterInsert()
+    async userLog() {
+        const logRepository = AppDataSource.getRepository(Log)
+        const log = Object.assign(new Log(), {
+            type: 'calender',
+            process: 'yeni takvim bilgisi eklendi',
+            user: this.user
+        })
+
+        logRepository.save(log)
+    }
+
+    participantsUser: User[];
+
+    @AfterLoad()
+    async afterLoad() {
+        if (this.participants) {
+            console.log('participantsUser', this.participants);
+            const participants = this.participants.map((k: any) => k.id)
+            const userRepository = AppDataSource.getRepository(User)
+            const user = await userRepository.find({
+                where: { id: In(participants) }, select: { id: true, firstName: true, lastName: true }
+            })
+            this.participantsUser = user;
+        } else {            
+            this.participantsUser = [];
+        }
+    }
 }

@@ -1,140 +1,116 @@
-import * as bcrypt from "bcrypt";
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  OneToMany,
-  CreateDateColumn,
-  UpdateDateColumn,
-  DeleteDateColumn,
-  BeforeInsert,
-  AfterInsert,
-  BeforeUpdate,
-  AfterUpdate,
-  AfterLoad,
-} from "typeorm";
-import { Phone } from "./Phone";
-import { Email } from "./Email";
-import { Address } from "./Address";
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, CreateDateColumn, UpdateDateColumn, DeleteDateColumn, BeforeInsert, AfterInsert, BeforeUpdate, AfterUpdate, SelectQueryBuilder, AfterLoad } from "typeorm"
+import { validateOrReject, IsDefined, IsEmail, Length, Max } from "class-validator";
+import { Phone } from "./Phone"
+import { Email } from "./Email"
+import { Address } from "./Address"
+import * as bcrypt from 'bcrypt';
 import { AppDataSource } from "../data-source";
 import { Log } from "./Log";
-import { IsDefined, IsEmail } from "class-validator";
-
-enum role {
-  ADMIN = "admin",
-  USER = "user",
-  CUSTOMER = "customer",
-}
-
-enum confirmed {
-  PENDING = "pending",
-  EMAIL = "email",
-  APPROVAL = "approval",
-  DENIED = "denied",
-}
+import { UserRoleEnum } from "../enum/UserRoleEnum";
+import { UserConfirmedEnum } from "../enum/UserConfirmedEnum";
 
 @Entity("users")
 export class User {
-  @PrimaryGeneratedColumn()
-  id: number;
 
-  @Column({ type: "varchar", length: 100, nullable: false })
-  @IsDefined({ message: "First name is required"})
-  firstName: string;
+    @PrimaryGeneratedColumn()
+    id: number
 
-  @Column({ type: "varchar", length: 100, nullable: false })
-  lastName: string;
+    @Column({ type: 'varchar', length: 100, nullable: false })
+    @IsDefined({ message: 'isim gerekli' })
+    @Length(3, 100)
+    firstName!: string
 
-  @Column({ unique: true, type: "varchar", length: 100 })
-  @IsEmail({}, { message: "Email is not valid" })
-  email: string;
+    @Column({ type: 'varchar', length: 100, nullable: false })
+    @IsDefined({ message: 'soyad gerekli' })
+    @Length(3, 100)
+    lastName: string
 
-  @Column({ type: "varchar", length: 100 })
-  password: string;
+    @Column({ type: 'varchar', length: 100, unique: true })
+    @IsEmail()
+    email: string
 
-  @Column({ type: "enum", enum: role, default: role.USER })
-  role: role;
+    @Column({ type: 'varchar', length: 100 })
+    @IsDefined({ message: 'şifre gerekli' })
+    @Length(6, 10)
+    password: string
 
-  @Column({ type: "enum", enum: confirmed, default: confirmed.PENDING })
-  confirmed: confirmed;
+    @Column({ type: "enum", enum: UserRoleEnum, default: UserRoleEnum.USER, nullable: false })
+    role: UserRoleEnum
 
-  @OneToMany(() => Phone, (phone) => phone.user, { cascade: true })
-  phones: Phone[];
+    @Column({ type: "enum", enum: UserConfirmedEnum, default: UserConfirmedEnum.PENDING, nullable: false })
+    confirmed: UserConfirmedEnum
 
-  @OneToMany(() => Email, (email) => email.user, { cascade: true })
-  emails: Email[];
+    @OneToMany(() => Phone, (phone) => phone.user, { cascade: true })
+    phone: Phone[]
 
-  @OneToMany(() => Address, (address) => address.user, { cascade: true })
-  addresses: Address[];
+    @OneToMany(() => Email, (email) => email.user, { cascade: true })
+    emails: Email[]
 
-  @CreateDateColumn({select:false})
-  createdAt: Date;
+    @OneToMany(() => Address, (address) => address.user, { cascade: true })
+    address: Address[]
 
-  @UpdateDateColumn({ nullable: true,select:false })
-  updatedAt: Date;
+    @CreateDateColumn({ select: true })
+    createdAt: Date;
 
-  @DeleteDateColumn({ nullable: true,select:false })
-  deletedAt?: Date;
+    @UpdateDateColumn({ nullable: true, select: true })
+    updateAt: Date;
 
-  @BeforeInsert()
-  async hashPassword() {
-    this.password = await bcrypt.hash(this.password, 10);
-  }
+    @DeleteDateColumn({ nullable: true, select: true })
+    deletedAt: Date;
 
-  @AfterInsert()
-  async userLog() {
-    const logRepository = AppDataSource.getRepository(Log);
-    const log = Object.assign(new Log(), {
-      type: "user",
-      process:
-        "new account created => " +
-        this.email +
-        " " +
-        this.firstName +
-        " " +
-        this.lastName,
-      user: this.id,
-    });
-    logRepository.save(log);
-  }
+    @BeforeInsert()
+    async hashPassword() {
+        this.password = await bcrypt.hash(this.password, 10)
+    }
 
-  @BeforeUpdate()
-  async userUpdateLog() {
-    const logRepository = AppDataSource.getRepository(Log);
-    const log = Object.assign(new Log(), {
-      type: "user",
-      process:
-        "new account updated after => " +
-        this.email +
-        " " +
-        this.firstName +
-        " " +
-        this.lastName,
-      user: this.id,
-    });
-    logRepository.save(log);
-  }
+    @BeforeInsert()
+    async validate() {
+        await validateOrReject(this, { skipUndefinedProperties: true });
+    }
 
-  @AfterUpdate()
-  async userAfterUpdateLog() {
-    const logRepository = AppDataSource.getRepository(Log);
-    const log = Object.assign(new Log(), {
-      type: "user",
-      process:
-        "new account updated before=> " +
-        this.email +
-        " " +
-        this.firstName +
-        " " +
-        this.lastName,
-      user: this.id,
-    });
-    logRepository.save(log);
-  }
+    @AfterInsert()
+    async userLog() {
+        const logRepository = AppDataSource.getRepository(Log)
+        const log = Object.assign(new Log(), {
+            type: 'user',
+            process: 'yeni kulanıcı kayıtı > ' + this.id + ' ' + this.email + ' ' + this.firstName + ' ' + this.lastName,
+            user: this.id
+        })
 
-  fullName:string;
-  @AfterLoad()
-  afterLoad() {
-    this.fullName = `${this.firstName} ${this.lastName}`;
-  }
+        logRepository.save(log)
+    }
+
+    @AfterUpdate()
+    async userAfterUpdateLog() {
+        console.log('----');
+
+        const logRepository = AppDataSource.getRepository(Log)
+        const log = Object.assign(new Log(), {
+            type: 'user',
+            process: 'kulanıcı güncellemesi öncesi > ' + this.email + ' ' + this.firstName + ' ' + this.lastName,
+            user: this.id
+        })
+
+        logRepository.save(log)
+    }
+    @BeforeUpdate()
+    async userBeforeUpdateLog() {
+        console.log('****');
+
+        const logRepository = AppDataSource.getRepository(Log)
+        const log = Object.assign(new Log(), {
+            type: 'user',
+            process: 'kulanıcı güncellemesi sonrası > ' + this.email + ' ' + this.firstName + ' ' + this.lastName,
+            user: this.id
+        })
+
+        logRepository.save(log)
+    }
+
+    fullName: string;
+
+    @AfterLoad()
+    afterLoad() {
+        this.fullName = `${this.firstName} ${this.lastName}`;
+    }
 }
