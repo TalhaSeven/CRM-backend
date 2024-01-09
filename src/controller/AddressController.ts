@@ -4,7 +4,6 @@ import { Address } from "../entity/Address"
 import { AddressModel } from "../model/AddressModel"
 
 export class AddressController {
-
     private addressRepository = AppDataSource.getRepository(Address)
 
     async all(request: Request, response: Response, next: NextFunction) {
@@ -24,7 +23,6 @@ export class AddressController {
 
     async one(request: Request, response: Response, next: NextFunction) {
         const id = parseInt(request.params.id)
-
         const address = await this.addressRepository.findOne({
             where: { id },
             relations: { user: true },
@@ -80,15 +78,12 @@ export class AddressController {
 
     async remove(request: Request, response: Response, next: NextFunction) {
         const id = parseInt(request.params.id)
-
         let addressToRemove = await this.addressRepository.findOneBy({ id })
 
         if (!addressToRemove) {
             return { message: "this address not exist", status: false }
         }
-
         await this.addressRepository.remove(addressToRemove)
-
         return { message: "address has been removed", status: true }
     }
 }
