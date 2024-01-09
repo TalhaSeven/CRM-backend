@@ -1,7 +1,3 @@
-# Awesome Project Build with TypeORM
+# CRM Backend
 
-Steps to run this project:
-
-1. Run `npm i` command
-2. Setup database settings inside `data-source.ts` file
-3. Run `npm start` command
+CRM (Customer Relationship Management) is a software system used by businesses to manage customer interactions, develop relationships, and enhance productivity. On the backend, it processes and stores customer data, facilitating communication between different departments. Database management, security, and user authentication are focal points of the backend. It provides a dynamic infrastructure by communicating with the frontend through APIs to visualize customer data and tailor it to specific business needs.
