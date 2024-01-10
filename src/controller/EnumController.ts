@@ -7,26 +7,54 @@ import { TaskStatus } from "../enum/TaskStatus";
 import { UserConfirmedEnum } from "../enum/UserConfirmedEnum";
 import { UserRoleEnum } from "../enum/UserRoleEnum";
 
-export class EnumController{
+export class EnumController {
     async task(request: Request, response: Response, next: NextFunction) {
-        return { data: TaskEnum, status: true }
+        return {
+            data: Object.values(TaskEnum).map((item: string, index: number) => {
+                return { id: item, name: item };
+            }), status: true
+        }
     }
     async calender(request: Request, response: Response, next: NextFunction) {
-        return { data: CalenderEnum, status: true }
+        return {
+            data: Object.values(CalenderEnum).map((item: string, index: number) => {
+                return { id: item, name: item };
+            }), status: true
+        }
     }
     async contact(request: Request, response: Response, next: NextFunction) {
-        return { data: ContactEnum, status: true }
+        return {
+            data: Object.values(ContactEnum).map((item: string, index: number) => {
+                return { id: item, name: item };
+            }), status: true
+        }
     }
     async log(request: Request, response: Response, next: NextFunction) {
-        return { data: LogTypeEnum, status: true }
+        return {
+            data: Object.values(LogTypeEnum).map((item: string, index: number) => {
+                return { id: item, name: item };
+            }), status: true
+        }
     }
     async taskStatus(request: Request, response: Response, next: NextFunction) {
-        return { data: TaskStatus, status: true }
+        return {
+            data: Object.values(TaskStatus).map((item: string, index: number) => {
+                return { id: item, name: item };
+            }), status: true
+        }
     }
     async confirm(request: Request, response: Response, next: NextFunction) {
-        return { data: UserConfirmedEnum, status: true }
+        return {
+            data: Object.values(UserConfirmedEnum).map((item: string, index: number) => {
+                return { id: item, name: item };
+            }), status: true
+        }
     }
     async usersRole(request: Request, response: Response, next: NextFunction) {
-        return { data: UserRoleEnum, status: true }
+        return {
+            data: Object.values(UserRoleEnum).map((item: string, index: number) => {
+                return { id: item, name: item };
+            }), status: true
+        }
     }
 }
