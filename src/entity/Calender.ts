@@ -44,7 +44,7 @@ export class Calender {
         const logRepository = AppDataSource.getRepository(Log)
         const log = Object.assign(new Log(), {
             type: 'calender',
-            process: 'yeni takvim bilgisi eklendi',
+            process: 'new calendar information added',
             user: this.user
         })
 
