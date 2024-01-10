@@ -17,7 +17,6 @@ export class AuthController {
 
     async login(request: Request, response: Response, next: NextFunction) {
         const { email, password }: LoginModel = request.body;
-
         const user = await this.userRepository.findOne({
             where: { email }
         })
@@ -38,62 +37,21 @@ export class AuthController {
                     data: loginUser,
                 }, "secret")
 
-                LogSave(user.id, 'Login İşlemi Yapıldı', 'user')
+                LogSave(user.id, 'Login Process Done', 'user')
 
                 return { status: true, token, user: loginUser }
             } else {
-                const error: any = new Error("email ve/veya şifre geçersiz")
+                const error: any = new Error("Email and/or password invalid")
                 next({ error, status: 401 })
             }
         } else {
-            const error: any = new Error("email ve/veya şifre geçersiz")
+            const error: any = new Error("Email and/or password invalid")
             next({ error, status: 401 })
         }
     }
+
     async register(request: Request, response: Response, next: NextFunction) {
-        //const { firstName, lastName, email, password }: RegisterModel = request.body;
-        
-        // const {firstName, lastName, email, password}  = request.body as RegisterModel;
-
-        // const user = Object.assign(new User(), {
-        //     firstName,
-        //     lastName,
-        //     email,
-        //     password
-        // })
-
-        // const body: RegisterModel = request.body;
-
-        // const user = Object.assign(new User(), {
-        //     firstName: body.firstName,
-        //     lastName: body.lastName,
-        //     email: body.email,
-        //     password: body.password
-        // })
-
-        // try {
-        //     const insert = await this.userRepository.save(user)
-
-        //     return {
-        //         firstName: insert.firstName,
-        //         lastName: insert.lastName,
-        //         email: insert.email,
-        //         role: insert.role,
-        //         confirmed: insert.confirmed,
-        //     } as UserModel
-        // } catch (error: any) {
-        //     if (error.code === undefined) {
-        //         error.message = error.map((k: any) => {
-        //             return { constraints: k.constraints, property: k.property }
-        //         })
-        //     }
-
-        //     next({ error, status: 404 })
-        // }
-
-        
         const body: RegisterModel = request.body;
-        
         const {res, status} = await newUser(body)
 
         if (status) {
@@ -110,7 +68,6 @@ export class AuthController {
     }
     async update(request: Request, response: Response, next: NextFunction) {
         const user: any = await getUserFromJWT(request)
-
         const id = user.id
         const { firstName, lastName }: RegisterModel = request.body;
 
@@ -121,12 +78,11 @@ export class AuthController {
             next({ error, status: 404 })
         }
     }
+
     async changePassword(request: Request, response: Response, next: NextFunction) {
         const user: any = await getUserFromJWT(request)
-
         const id = user.id
         const { oldPassword, newPassword } = request.body;
-
         const isValid = await bcrypt.compare(oldPassword, user.password)
 
         if (isValid) {
@@ -134,7 +90,7 @@ export class AuthController {
             const update = await this.userRepository.update({ id }, { password: newPasswordBcrypt })
             return { status: true, update }
         } else {
-            const error: any = new Error("şifre geçersiz")
+            const error: any = new Error("Old Password Invalid")
             next({ error, status: 404 })
         }
     }

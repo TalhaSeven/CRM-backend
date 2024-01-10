@@ -1,5 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany, CreateDateColumn, UpdateDateColumn, DeleteDateColumn, BeforeInsert, AfterInsert, BeforeUpdate, AfterUpdate, SelectQueryBuilder, AfterLoad } from "typeorm"
-import { validateOrReject, IsDefined, IsEmail, Length, Max } from "class-validator";
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, CreateDateColumn, UpdateDateColumn, DeleteDateColumn, BeforeInsert, AfterInsert, BeforeUpdate, AfterUpdate, AfterLoad } from "typeorm"
+import { validateOrReject, IsDefined, IsEmail, Length } from "class-validator";
 import { Phone } from "./Phone"
 import { Email } from "./Email"
 import { Address } from "./Address"
@@ -16,12 +16,12 @@ export class User {
     id: number
 
     @Column({ type: 'varchar', length: 100, nullable: false })
-    @IsDefined({ message: 'isim gerekli' })
+    @IsDefined({ message: 'First Name Required' })
     @Length(3, 100)
     firstName!: string
 
     @Column({ type: 'varchar', length: 100, nullable: false })
-    @IsDefined({ message: 'soyad gerekli' })
+    @IsDefined({ message: 'Last Name Required' })
     @Length(3, 100)
     lastName: string
 
@@ -30,7 +30,7 @@ export class User {
     email: string
 
     @Column({ type: 'varchar', length: 100 })
-    @IsDefined({ message: 'şifre gerekli' })
+    @IsDefined({ message: 'Password Required' })
     @Length(6, 10)
     password: string
 
@@ -73,7 +73,7 @@ export class User {
         const logRepository = AppDataSource.getRepository(Log)
         const log = Object.assign(new Log(), {
             type: 'user',
-            process: 'yeni kulanıcı kayıtı > ' + this.id + ' ' + this.email + ' ' + this.firstName + ' ' + this.lastName,
+            process: 'New User Add > ' + this.id + ' ' + this.email + ' ' + this.firstName + ' ' + this.lastName,
             user: this.id
         })
 
@@ -87,7 +87,7 @@ export class User {
         const logRepository = AppDataSource.getRepository(Log)
         const log = Object.assign(new Log(), {
             type: 'user',
-            process: 'kulanıcı güncellemesi öncesi > ' + this.email + ' ' + this.firstName + ' ' + this.lastName,
+            process: 'User Update Before > ' + this.email + ' ' + this.firstName + ' ' + this.lastName,
             user: this.id
         })
 
@@ -100,7 +100,7 @@ export class User {
         const logRepository = AppDataSource.getRepository(Log)
         const log = Object.assign(new Log(), {
             type: 'user',
-            process: 'kulanıcı güncellemesi sonrası > ' + this.email + ' ' + this.firstName + ' ' + this.lastName,
+            process: 'User Update After > ' + this.email + ' ' + this.firstName + ' ' + this.lastName,
             user: this.id
         })
 
